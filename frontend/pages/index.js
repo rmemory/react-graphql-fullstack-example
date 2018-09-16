@@ -1,9 +1,9 @@
 import Link from 'next/link';
 
-const Goober = props => (
+const Index = props => (
 	<div>
-		<p>Heyoo!</p>
+		<p>Hello page!</p>
 	</div>
 );
 
-export default Goober;
+export default Index;
