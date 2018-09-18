@@ -1,45 +1,44 @@
 import React, { Component } from 'react';
 import Meta from './Meta';
 import Header from './Header';
-import styled from 'styled-components';
+import styled, { ThemeProvider, injectGlobal } from 'styled-components';
 
 /* 
  * Wraps all components, general theming goes here
  */
 
-const MyButton = styled.button`
-	display: block;
-	background: red;
-	font-size: 50px;
-	color: ${props => props.green ? 'green' : 'black'};
-	span {
-		font-size: 100px;
-	}
-	.big-arrow {
-		font-size: 125px;
-	}
+ const theme = {
+	red: '#FF0000',
+	black: '#393939',
+	grey: '#3A3A3A',
+	lightgrey: '#E1E1E1',
+	offWhite: '#EDEDED',
+	maxWidth: '1000px',
+	// No horizontal offset, vertical offset, blur size, spread, color
+	bs: '0 12px 24px 0 rgba(0,0,0,0.09)',
+ }
+
+const StyledPage = styled.div`
+	background: white;
+	color: ${props => props.theme.black};;
 `;
 
-// const BigArrow = styled.span`
-// 	font-size: 100px;
-// `;
+const Inner = styled.div`
+	max-width: ${props => props.theme.maxWidth};
+	margin: 0 auto; // Center horizontally according to max width
+	padding: 2rem;
+`;
 
 export default class Page extends Component {
 	render() {
 		return (
-			<div>
-				<Meta />
-				<Header />
-				<MyButton green={true}>
-					Click Me
-					<span>-></span>
-				</MyButton>
-				<MyButton>
-					Click Me
-					<span className="big-arrow">-></span>
-				</MyButton>
-				{this.props.children}
-			</div>
+			<ThemeProvider theme={theme}>
+				<StyledPage>
+					<Meta />
+					<Header />
+					<Inner>{this.props.children}</Inner>
+				</StyledPage>
+			</ThemeProvider>
 		);
 	}
 }
