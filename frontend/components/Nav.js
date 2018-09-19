@@ -1,6 +1,7 @@
 /* By using Link instead of a regular anchor link, it means
  * the link is bound to HTML5 push state */
 import Link from 'next/link';
+
 import NavStyles from './styles/NavStyles';
 
 const Nav = () => (

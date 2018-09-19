@@ -1,7 +1,7 @@
 import App, { Container } from 'next/app';
 import Page from '../components/Page';
 
-/* Parent page */
+/* Parent page. All app state will be stored here */
 class MyApp extends App {
 	render () {
 		const { Component } = this.props;

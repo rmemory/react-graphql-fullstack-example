@@ -5,7 +5,7 @@
 
 const Index = props => (
 	<div>
-		<p>Hello page!</p>
+		<p>Main page!</p>
 	</div>
 );
 
