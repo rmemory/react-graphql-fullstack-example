@@ -1,12 +1,14 @@
+import Items from '../components/Items';
+
 /*
  * Each "page" js file is a route
  * Note that next.js means we don't have to import React
  */
 
-const Index = props => (
+const Home = props => (
 	<div>
-		<p>Main page!</p>
+		<Items />
 	</div>
 );
 
-export default Index;
+export default Home;

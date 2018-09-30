@@ -1,11 +1,11 @@
 # import * from './generated/prisma.graphql'
 
 input YogaItemCreateInput {
-  title: String!
-  description: String!
-  image: String
-  largeImage: String
-  price: Int!
+	title: String!
+	description: String!
+	image: String
+	largeImage: String
+	price: Int!
 }
 
 type Mutation {
