@@ -33,5 +33,10 @@
     "presets": [
       "env"
     ]
+  },
+  "devDependencies": {
+    "ajv": "^6.5.4",
+    "tslint": "^5.11.0",
+    "typescript": "^3.1.1"
   }
 }
