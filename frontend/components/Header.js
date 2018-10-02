@@ -45,7 +45,7 @@ const LogoH1 = styled.h1`
 `;
 
 const Header = () => (
-	<HeaderDiv>
+	<div>
 		<div className="bar">
 			<LogoH1>
 				<Link href="/">
@@ -60,7 +60,7 @@ const Header = () => (
 		<div>
 			Cart
 		</div>
-	</HeaderDiv>
+	</div>
 );
 
 export default Header;
