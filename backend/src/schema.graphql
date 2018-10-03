@@ -1,0 +1,14 @@
+# Client facing API definitions go here
+
+# type Dog {
+# 	name: String!
+# }
+
+# type Query {
+# 	dogs: [Dog]!
+# }
+
+# type Mutation {
+# 	createDog(name: String!): Dog!
+# }
+
