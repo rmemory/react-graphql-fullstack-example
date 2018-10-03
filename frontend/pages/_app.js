@@ -1,5 +1,7 @@
 import App, { Container } from 'next/app';
+import { ApolloProvider } from 'react-apollo';
 
+import withData from '../lib/withData';
 import Page from "../components/Page";
 
 /* Next.js uses the App component to initialize pages. You can override it 
@@ -15,25 +17,32 @@ class MyApp extends App {
 	static async getInitialProps({ Component, router, ctx }) {
 		let pageProps = {}
 	
+		// If the component has props
 		if (Component.getInitialProps) {
+			// Crawl the component looking for queries and mutations
 			pageProps = await Component.getInitialProps(ctx)
 		}
 	
+		// this exposes the query to the user
+		pageProps.query = ctx.query;
+
 		// Passed as props to render
 		return { pageProps }
 	}
 
 	render() {
-		const { Component, pageProps } = this.props;
+		const { Component, apollo, pageProps } = this.props;
 
 		return (
 			<Container>
-				<Page>
-					<Component />
-				</Page>
+				<ApolloProvider client={apollo}>
+					<Page>
+						<Component { ...pageProps } />
+					</Page>
+				</ApolloProvider>
 			</Container>
 		)
 	}
 }
 
-export default MyApp;
+export default withData(MyApp);
