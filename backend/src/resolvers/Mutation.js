@@ -29,16 +29,30 @@ const mutations = {
 				id: args.id
 			}
 			// info somehow tells Prisma GraphQL what to return
-			// in this case an item as per schema.graphql.
-			// I guess info contains the mutation from the client 
-			// side, although I still don't know how that tells
-			// prisma to return an "Item". Something to do with 
-			// ASTs
+			// in this case an item as per schema.graphql. More
+			// specifically, info is the stuff inside the curly 
+			// braces **after** the mutation/query function 
+			// specified in the gql graphql-tag from the front 
+			// end component
 		}, info);
 
 		console.log(item);
 		return item; 
 	},
+
+	async deleteItem(parent, args, ctx, info) {
+		const where = { id: args.id };
+		// 1. find and get the item. Typically we would pass in 
+		// info here (which is the query obtained from the frontend). 
+		// In this case we are using raw graphql, aka `{ id title}`
+		const item = await ctx.db.query.item({where}, `{ id title}`);
+
+		// 2. Check to make sure they own the ID or have permissions.
+		// TODO
+
+		// 3. Delete it
+		return await ctx.db.mutation.deleteItem({where}, info);
+	}
 	
 	/*
 	mutation createDog {
