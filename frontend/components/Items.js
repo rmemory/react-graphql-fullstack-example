@@ -38,7 +38,10 @@ class Items extends Component {
 						if (loading) return <p>Loading ...</p>
 						if (error) return <p>Error: {error.message}</p>
 						return <ItemsListDiv>
-							{data.items.map(item=> <Item key={item.id} item={item}/>)}
+							{data.items.map(item=> {
+								console.log(item.description);
+								return <Item key={item.id} item={item}/>
+							})}
 						</ItemsListDiv>
 					}}
 				</Query>

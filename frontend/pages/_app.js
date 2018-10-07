@@ -23,7 +23,9 @@ class MyApp extends App {
 			pageProps = await Component.getInitialProps(ctx)
 		}
 	
-		// this exposes the query to the user
+		// this exposes the query params (if any) to all pages. For example,
+		// The ID of each Item is a query param:
+		// http://localhost:7777/item?id=cjmuwqt798jft0b48orrk83px
 		pageProps.query = ctx.query;
 
 		// Passed as props to render

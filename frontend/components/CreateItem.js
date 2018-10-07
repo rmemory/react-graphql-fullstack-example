@@ -67,7 +67,9 @@ class CreateItem extends Component {
 							// Stop browser from reloading
 							event.preventDefault();
 
-							// call mutation to store item in DB
+							// call mutation to store item in DB (uses variables passed in
+							// Mutation tag). See UpdateItem for an example of specifying
+							// the variables directly in the Yoga API.
 							const response = await createItem();
 
 							console.log(response);
