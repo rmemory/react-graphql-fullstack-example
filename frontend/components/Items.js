@@ -5,10 +5,11 @@ import styled from 'styled-components';
 
 import Item from './Item';
 import Pagination from "./Pagination";
+import { perPage } from "../config";
 
 const ALL_ITEMS_QUERY = gql`
-	query ALL_ITEMS_QUERY {
-		items {
+	query ALL_ITEMS_QUERY($skip: Int = 0, $first: Int = ${perPage}) {
+		items(first: $first, skip: $skip, orderBy: createdAt_ASC) {
 			id
 			title
 			price
@@ -36,7 +37,13 @@ class Items extends Component {
 		return (
 			<CenterDiv>
 				<Pagination queryParamPageNumber={this.props.queryParamPageNumber} />
-					<Query query={ALL_ITEMS_QUERY}>
+					<Query 
+						query={ALL_ITEMS_QUERY} 
+						// fetchPolicy="network-only" // means never use the cache
+						variables={{
+						skip: this.props.queryParamPageNumber * perPage - perPage,
+						first: perPage
+					}}>
 						{({data, loading, error}) => {
 							if (loading) return <p>Loading ...</p>
 							if (error) return <p>Error: {error.message}</p>

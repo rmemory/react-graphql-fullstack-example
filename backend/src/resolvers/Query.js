@@ -14,7 +14,7 @@ const Query = {
 
 	/* Here is the long hand way of doing items: forwardTo('db;) */
 	async items(parent, args, ctx, info){
-		const items = await ctx.db.query.items();
+		const items = await ctx.db.query.items(args);
 		return items;
 	},
 	// items: forwardTo('db'),

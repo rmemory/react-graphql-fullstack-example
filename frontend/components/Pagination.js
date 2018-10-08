@@ -24,11 +24,8 @@ class Pagination extends Component {
 				<Query query={PAGINATION_QUERY}>
 					{({data, loading, error})=> {
 						const count = data.itemsConnection.aggregate.count;
-						console.log(count);;
 						const pages = Math.ceil(count / perPage);
-						console.log(pages);
 						const page = this.props.queryParamPageNumber;
-						console.log(page)
 						return (
 							<PaginationStyles>
 								<Head>
