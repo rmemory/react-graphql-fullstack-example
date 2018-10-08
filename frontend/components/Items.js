@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 import styled from 'styled-components';
+
 import Item from './Item';
+import Pagination from "./Pagination";
 
 const ALL_ITEMS_QUERY = gql`
 	query ALL_ITEMS_QUERY {
@@ -33,18 +35,21 @@ class Items extends Component {
 	render() {
 		return (
 			<CenterDiv>
-				<Query query={ALL_ITEMS_QUERY}>
-					{({data, loading, error}) => {
-						if (loading) return <p>Loading ...</p>
-						if (error) return <p>Error: {error.message}</p>
-						return <ItemsListDiv>
-							{data.items.map(item=> {
-								// console.log(item.description);
-								return <Item key={item.id} item={item}/>
-							})}
-						</ItemsListDiv>
-					}}
-				</Query>
+				<Pagination queryParamPageNumber={this.props.queryParamPageNumber} />
+					<Query query={ALL_ITEMS_QUERY}>
+						{({data, loading, error}) => {
+							if (loading) return <p>Loading ...</p>
+							if (error) return <p>Error: {error.message}</p>
+							
+							return <ItemsListDiv>
+								{data.items.map(item=> {
+									// console.log(item.description);
+									return <Item key={item.id} item={item}/>
+								})}
+							</ItemsListDiv>
+						}}
+					</Query>
+				<Pagination queryParamPageNumber={this.props.queryParamPageNumber} />
 			</CenterDiv>
 		);
 	}

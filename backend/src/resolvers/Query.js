@@ -22,6 +22,9 @@ const Query = {
 	/* Get a single item */
 	item: forwardTo('db'),
 
+	/* Get aggreate data */
+	itemsConnection: forwardTo('db'),
+
 	/* Some simply examples */
 	/*
 	query getDogs {
