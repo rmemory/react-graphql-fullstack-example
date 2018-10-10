@@ -10,7 +10,11 @@ const db = require('./db');
 const server = createServer();
 
 // Use express middleware to handle cookies (JWT)
-// server.express.use(cookieParser());
+/*
+ * This puts the cookie into a nicely formatted cookie
+ * object rather than just a cookie string.
+ */
+server.express.use(cookieParser());
 
 // // decode the JWT so we can get the user Id on each request
 // server.express.use((req, res, next) => {
