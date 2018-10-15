@@ -25,6 +25,18 @@ const Query = {
 	/* Get aggreate data */
 	itemsConnection: forwardTo('db'),
 
+	// Get current logged in user if any, null is valid if no user logged in
+	me(parent, args, ctx, info) {
+		// Check if there is a current user id
+		if (!ctx.request.userId) {
+			return null; // no user, but this is a valid response
+		}
+
+		return ctx.db.query.user({
+			where: {id: ctx.request.userId},
+		}, info);
+	},
+
 	/* Some simply examples */
 	/*
 	query getDogs {

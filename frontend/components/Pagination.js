@@ -34,9 +34,10 @@ class Pagination extends Component {
 								<Link
 									prefetch
 									href={{
-									pathname: "items",
-									query: { page: page - 1 }
-								}}>
+										pathname: "items",
+										query: { page: page - 1 }
+									}}
+								>
 									<a className="prev" aria-disabled={page <= 1}>Prev</a>
 								</Link>
 								<p>Page {this.props.queryParamPageNumber} of {pages}</p>
@@ -44,9 +45,10 @@ class Pagination extends Component {
 								<Link
 									prefetch
 									href={{
-									pathname: "items",
-									query: { page: page + 1 }
-								}}>
+										pathname: "items",
+										query: { page: page + 1 }
+									}}
+								>
 									<a className="next" aria-disabled={page >= pages}>Next</a>
 								</Link>
 							</PaginationStyles>

@@ -1,5 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require ('jsonwebtoken');
+const { randomBytes } = require('crypto');
+const { promisify } = require('util');
 
 const mutations = {
 	async createItem(parent, args, ctx, info) {
@@ -73,6 +75,7 @@ const mutations = {
 		}, info);
 
 		// create JWT token for user (this is the authentication mechanism)
+		// Use https://jwt.io to decode the jwt value stored in token
 		const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);
 
 		/*
@@ -96,6 +99,113 @@ const mutations = {
 
 		// return the user object to the mutation (called by Apollo on the front end)
 		return user;
+	},
+
+	async signin(parent, {email, password}, ctx, info) {
+		// check if there is a user associated with that email
+		const user = await ctx.db.query.user({where: {email: email}})
+
+		// check if the password is correct
+		if (!user) {
+			// Might not want to return a message here for security reasons
+			// because this tells a hacker that the email address doesn't
+			// have an account, where if the error doesn't appear but the
+			// login is unsuccessful, that means there is an account now 
+			// they just need to guess the password
+			throw new Error(`Unrecognized signin credentials`);
+		}
+
+		// generate the JWT token for the session (comparing hash to hash)
+		const valid = await bcrypt.compare(password, user.password);
+
+		if (!valid) {
+			throw new Error(`Invalid password`);
+		}
+
+		// set the cookie with the token
+		const token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);
+		ctx.response.cookie('token', token, {
+			httpOnly: true, // The cookie and hence JWT token can only be accessed via http, and not JS
+			maxAge: 1000 * 60 * 60 * 24 * 365, // one year timeout on cookie and signin
+		});
+
+		console.log(user);
+
+		// return the user
+		return user;
+	},
+
+	async signout(parent, args, ctx, info) {
+		ctx.response.clearCookie('token');
+		return { message: 'Goodbye'}
+	},
+
+	async requestReset(parent, args, ctx, info) {
+		//1. Check if real user
+		const user = await ctx.db.query.user({where: {email: args.email}});
+		if (!user) {
+			throw new Error(`No such user found for email ${args.email}`);
+		}
+
+		//2. Set a reset token and expiry on that user
+		const randomBytesPromisified = promisify(randomBytes);
+
+		const resetToken = (await randomBytesPromisified(20)).toString('hex');
+		const resetTokenExpiry = Date.now() + 36000000; // 1 hour
+		const res = await ctx.db.mutation.updateUser({
+			where: {email: args.email},
+			data: {resetToken: resetToken, resetTokenExpiry: resetTokenExpiry}
+		});
+
+		//3. email them that reset token
+	}, 
+
+	async resetPassword(parent, args, ctx, info) {
+		// Check if passwords match
+		if (args.password != args.confirmPassword) {
+			throw new Error("New password does not match confirmed password");
+		}
+
+		// Check if it is a legit reset token
+		// Check if token has expired
+		const [user] = await ctx.db.query.users({
+			where: {
+				resetToken: args.resetToken,
+				resetTokenExpiry_gte: Date.now() - 36000000,
+			}
+		});
+
+		if (!user) {
+			throw new Error(`Invalid password reset token`);
+		}
+
+		// Hash the new password
+		// Save the new password and remove resetToken, resetTokenExpiry
+		// SALT length is 10 (makes each hash value unique)
+		const password = await bcrypt.hash(args.password, 10);
+
+		// update the user
+		const updatedUser = await ctx.db.mutation.updateUser({
+			where: {
+				email: user.email
+			},
+			data: {
+				password: password, // Override password
+				resetToken: null,
+				resetTokenExpiry: null,
+			},
+		});
+
+		// generate new JWT
+		// Set the new JWT cookie
+		const token = jwt.sign({ userId: updatedUser.id }, process.env.APP_SECRET);
+		ctx.response.cookie('token', token, {
+			httpOnly: true, // The cookie and hence JWT token can only be accessed via http, and not JS
+			maxAge: 1000 * 60 * 60 * 24 * 365, // one year timeout on cookie and signin
+		});
+
+		// return the updated user
+		return updatedUser;
 	}
 	
 	/*

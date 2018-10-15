@@ -41,9 +41,10 @@ class Items extends Component {
 						query={ALL_ITEMS_QUERY} 
 						// fetchPolicy="network-only" // means never use the cache
 						variables={{
-						skip: this.props.queryParamPageNumber * perPage - perPage,
-						first: perPage
-					}}>
+							skip: this.props.queryParamPageNumber * perPage - perPage,
+							first: perPage
+						}}
+					>
 						{({data, loading, error}) => {
 							if (loading) return <p>Loading ...</p>
 							if (error) return <p>Error: {error.message}</p>
