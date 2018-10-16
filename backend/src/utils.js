@@ -1,17 +1,33 @@
+/*
+
+Look for permissions overlap 
+
+// user
+{
+	name: Richard
+	permissions: ['ADMIN', 'ITEMUPDATE']
+}
+
+['PERMISSIONUPDATE', 'ADMIN']
+
+*/
+
 function hasPermission(user, permissionsNeeded) {
-  const matchedPermissions = user.permissions.filter(permissionTheyHave =>
-    permissionsNeeded.includes(permissionTheyHave)
-  );
-  if (!matchedPermissions.length) {
-    throw new Error(`You do not have sufficient permissions
+	// Do the permissions they currently have include what they are asking for?
+	const matchedPermissions = user.permissions.filter(permissionTheyHave =>
+		permissionsNeeded.includes(permissionTheyHave)
+	);
 
-      : ${permissionsNeeded}
+	if (!matchedPermissions.length) {
+		throw new Error(`You do not have sufficient permissions
 
-      You Have:
+			: ${permissionsNeeded}
 
-      ${user.permissions}
-      `);
-  }
+			You Have:
+
+			${user.permissions}
+			`);
+	}
 }
 
 exports.hasPermission = hasPermission;
