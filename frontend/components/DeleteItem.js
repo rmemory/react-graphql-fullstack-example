@@ -25,7 +25,6 @@ class DeleteItem extends Component {
 		console.log(data, payload);
 		// 2. filter the deleted item out of the page
 		data.items = data.items.filter(item => {
-			console.log(item);
 			return item.id !== payload.data.deleteItem.id;
 		});
 
@@ -42,7 +41,9 @@ class DeleteItem extends Component {
 				{(deleteItemMutation, {error}) => {
 					return <button onClick={() => {
 						if(confirm('Are you sure you want to delete this item?')) {
-							deleteItemMutation();
+							deleteItemMutation().catch(err => {
+								alert(err.message);
+							});
 						}
 					}}>
 						{this.props.children}

@@ -39,6 +39,11 @@ class MyApp extends App {
 			<Container>
 				<ApolloProvider client={apollo}>
 					<Page>
+						{/* The Component here is the route or page being rendered,
+						such as sell, signup, etc. In other words, the page 
+						component in this case is a child to a client side 
+						component. The user enters a URL, next grabs that route 
+						and renders it by using _app. */}
 						<Component { ...pageProps } />
 					</Page>
 				</ApolloProvider>

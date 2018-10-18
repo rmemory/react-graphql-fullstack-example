@@ -3,6 +3,7 @@ const jwt = require ('jsonwebtoken');
 const { randomBytes } = require('crypto');
 const { promisify } = require('util');
 const { transport, makeANiceEmail } = require('../mail');
+const { hasPermission } = require('../utils');
 
 const mutations = {
 	async createItem(parent, args, ctx, info) {
@@ -59,10 +60,15 @@ const mutations = {
 		// 1. find and get the item. Typically we would pass in 
 		// info here (which is the query obtained from the frontend). 
 		// In this case we are using raw graphql, aka `{ id title}`
-		const item = await ctx.db.query.item({where}, `{ id title}`);
+		const item = await ctx.db.query.item({where}, `{ id title user {id}}`);
 
 		// 2. Check to make sure they own the ID or have permissions.
-		// TODO
+		const ownsItem = item.user.id === ctx.request.userId;
+		const hasPermissions = ctx.request.user.permissions.some(permission => ['ADMIN', 'ITEMDELETE'].includes(permission));
+
+		if (!ownsItem && hasPermissions) {
+			throw new Error('You don\'t have permission to delete that item');
+		} 
 
 		// 3. Delete it
 		return await ctx.db.mutation.deleteItem({where}, info);
@@ -230,7 +236,36 @@ const mutations = {
 
 		// return the updated user
 		return updatedUser;
-	}
+	},
+
+	async updatePermissions(parent, args, ctx, info) {
+		//1. Check if they are logged in
+		if (!ctx.request.userId) {
+			throw new Error("You must be logged in");
+		}
+
+		//2. Query the current user
+		const currentUser = await ctx.db.query.user({
+			where: {
+				id: ctx.request.userId,
+			}
+		}, info);
+
+		//3. check if they have permissions to do this
+		hasPermission(currentUser, ['ADMIN', ' PERMISSIONUPDATE']);
+
+		//4. update the permissions
+		return ctx.db.mutation.updateUser({
+			data: {
+				permissions: {
+					set: args.permissions,
+				}
+			},
+			where: {
+				id: args.userId, // might not be and doesn't have to be current logged in user
+			},
+		}, info);
+	},
 	
 	/*
 	mutation createDog {
